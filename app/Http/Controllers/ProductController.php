@@ -29,7 +29,7 @@ class ProductController extends Controller
 
         $createdProduct = Product::create($product);
 
-        return response($createdProduct, 201, ['location' => '/product/' . $createdProduct->public_id]);
+        return response(null, 201, ['location' => $request->getRequestUri() . $createdProduct->public_id]);
     }
 
     /**
