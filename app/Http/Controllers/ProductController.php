@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -19,7 +20,16 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $product = $request->validate([
+            'name' => ['required', 'unique:product', 'max:100'],
+            'quantity' => ['required', 'numeric', 'integer', 'min:0'],
+            'pictureFilename' => ['nullable', 'extensions:jpg,png'],
+            'price' => ['required', 'numeric', 'decimal:2', 'min:0']
+        ]);
+
+        $createdProduct = Product::create($product);
+
+        return response($createdProduct, 201, ['location' => '/product/' . $createdProduct->public_id]);
     }
 
     /**
