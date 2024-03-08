@@ -21,10 +21,10 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $product = $request->validate([
-            'name' => ['required', 'unique:product', 'max:100'],
+            'name' => ['required', 'unique:product,name', 'max:100'],
             'quantity' => ['required', 'numeric', 'integer', 'min:0'],
             'pictureFilename' => ['nullable', 'extensions:jpg,png'],
-            'price' => ['required', 'numeric', 'decimal:2', 'min:0']
+            'price' => ['required', 'decimal:1,2', 'min:0']
         ]);
 
         $createdProduct = Product::create($product);
