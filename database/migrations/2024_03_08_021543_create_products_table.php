@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->integer('quantity')->unsigned();
             $table->string('picture_filename')->nullable();
             $table->bigInteger('price')->unsigned();
-            $table->timestamp('deleted_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->unique('name', 'unique_name');
