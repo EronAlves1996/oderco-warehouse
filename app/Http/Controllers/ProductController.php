@@ -46,6 +46,12 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $status_code = 204;
+        try {
+            DB::delete('delete product where public_id = ?', [$id]);
+        } catch (Excepetion $e) {
+            $status_code = 409;
+        }
+        return response(null, $status_code);
     }
 }
