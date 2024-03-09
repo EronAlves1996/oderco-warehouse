@@ -20,14 +20,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = $request->validate([
-            'name' => ['required', 'unique:product,name', 'max:100'],
-            'quantity' => ['required', 'numeric', 'integer', 'min:0'],
-            'picture_filename' => ['nullable', 'extensions:jpg,png'],
-            'price' => ['required', 'decimal:1,2', 'min:0']
-        ]);
-
-        $createdProduct = Product::create($product);
+        $createdProduct = Product::newFromRequest($request);
 
         return response(null, 201, ['location' => $request->getRequestUri() . $createdProduct->public_id]);
     }
