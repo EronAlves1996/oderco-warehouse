@@ -10,5 +10,7 @@
       aria-label="Pesquisar..."
     />
   </header>
-  <slot />
+  <section class="py-4 px-5">
+    <NuxtPage />
+  </section>
 </template>
