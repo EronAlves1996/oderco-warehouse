@@ -21,10 +21,14 @@ class Product extends Model
 
     protected $appends = ['price'];
 
-    private static $partial_validation_array = [
-        'name' => ['required', 'unique:product,name', 'max:100'],
+    private static $name_validations = [
+        'update' => ['required', 'max:100'],
+        'creation' => ['required', 'unique:product,name', 'max:100']
+    ];
+
+    private static $base_validation = [
         'quantity' => ['required', 'numeric', 'integer', 'min:0'],
-        'picture_path' => ['nullable', 'extensions:jpg,png'],
+        'picture_path' => ['nullable', 'ends_with:jpg,png'],
         'price' => ['required', 'decimal:1,2', 'min:0']
     ];
 
@@ -37,7 +41,10 @@ class Product extends Model
         parent::boot();
 
         static::saving(function ($model) {
-            $model->public_id = Uuid::uuid4();
+            $model_public_id = $model->public_id;
+            if (is_null($model_public_id)) {
+                $model->public_id = Uuid::uuid4();
+            }
         });
     }
 
@@ -51,7 +58,7 @@ class Product extends Model
 
     public static function newFromRequest(Request $request): Product
     {
-        $product = $request->validate(static::$partial_validation_array);
+        $product = $request->validate(array_merge(static::$base_validation, ['name' => static::$name_validations['creation']]));
 
         return Product::create($product);
     }
@@ -62,7 +69,7 @@ class Product extends Model
             throw new Exception('Not allowed to update another entity');
         }
 
-        $toUpdate = $request->validate(array_merge(static::$partial_validation_array, static::$public_id_validation));
+        $toUpdate = $request->validate(array_merge(static::$base_validation, ['name' => static::$name_validations['update']], static::$public_id_validation));
 
         $this->fill($toUpdate);
         $this->save();
