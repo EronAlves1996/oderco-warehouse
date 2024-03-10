@@ -25,7 +25,10 @@ const productsApiSchema = z.array(productSchema);
 const products = productsApiSchema.parse(value);
 </script>
 <template>
-  <PageHeader />
+  <PageHeader
+    title="Lista de Produtos Cadastrados"
+    :render-add-product-button="true"
+  />
   <section class="mt-5">
     <table class="table table-hover">
       <thead>
