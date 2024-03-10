@@ -6,5 +6,5 @@ const v$ = useVuelidate(rules, state);
 provide("formControls", { state, v$ });
 </script>
 <template>
-  <form class="w-100"><slot /></form>
+  <form class="w-100 d-flex flex-column gap-5"><slot /></form>
 </template>

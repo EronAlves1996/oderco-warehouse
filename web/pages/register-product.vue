@@ -22,15 +22,17 @@ const rules = {
   <PageHeader title="Novo Produto" />
   <section class="w-50 d-flex m-auto">
     <FormContext :state="state" :rules="rules">
-      <FormField id="name" label="Nome" type="text" name="name" />
-      <FormField
-        id="quantity"
-        label="Quantidade de Estoque"
-        type="number"
-        name="quantity"
-      />
-      <FormField id="price" label="Preço" type="number" name="price" />
-      <button type="submit" class="btn btn-primary">Finalizar</button>
+      <div class="d-flex flex-column">
+        <FormField id="name" label="Nome" type="text" name="name" />
+        <FormField
+          id="quantity"
+          label="Quantidade de Estoque"
+          type="number"
+          name="quantity"
+        />
+        <FormField id="price" label="Preço" type="number" name="price" />
+      </div>
+      <DefaultButton class-names="w-100">Finalizar</DefaultButton>
     </FormContext>
   </section>
 </template>

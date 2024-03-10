@@ -8,9 +8,7 @@ const { title, renderAddProductButton } = defineProps({
   <header class="d-flex justify-content-between align-items-center gap-3">
     <h4 class="fw-bold">{{ title }}</h4>
     <NuxtLink to="/register-product" v-if="renderAddProductButton">
-      <button type="button" class="btn btn-primary py-2 px-4 fw-bold">
-        + Adicionar Produto
-      </button>
+      <DefaultButton> + Adicionar Produto </DefaultButton>
     </NuxtLink>
   </header>
 </template>
