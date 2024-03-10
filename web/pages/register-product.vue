@@ -5,17 +5,36 @@ import {
   minValue,
   integer,
   maxLength,
+  decimal,
+  helpers,
 } from "@vuelidate/validators";
+const { withMessage } = helpers;
 
 const state = reactive({
   name: "",
   quantity: 0,
   price: 0,
 });
+const requiredWithMessage = withMessage("Campo é obrigatório", required);
+const numericWithMessage = withMessage("Permitido apenas números!", numeric);
+const nonNegative = withMessage("Campo não pode ser negativo!", minValue(0));
 const rules = {
-  name: { required, maxLength: maxLength(100) },
-  quantity: { required, numeric, minValue: minValue(0), integer },
-  price: { required, numeric, minValue: minValue(0) },
+  name: {
+    requiredWithMessage,
+    maxLength: withMessage("Campo suporta até 100 caracteres", maxLength(100)),
+  },
+  quantity: {
+    requiredWithMessage,
+    numericWithMessage,
+    nonNegative,
+    integer: withMessage("Campo não pode ser decimal!", integer),
+  },
+  price: {
+    requiredWithMessage,
+    numericWithMessage,
+    nonNegative,
+    decimal: withMessage("Obrigatório que campo seja decimal!", decimal),
+  },
 };
 </script>
 <template>
