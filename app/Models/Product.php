@@ -51,7 +51,7 @@ class Product extends Model
 
     public static function newFromRequest(Request $request): Product
     {
-        $product = $request->validate($partial_validation_array);
+        $product = $request->validate(static::$partial_validation_array);
 
         return Product::create($product);
     }
