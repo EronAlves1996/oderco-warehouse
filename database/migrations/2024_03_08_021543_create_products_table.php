@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->uuid('public_id');
             $table->string('name', 100);
             $table->integer('quantity')->unsigned();
-            $table->string('picture_filename')->nullable();
+            $table->string('picture_path')->nullable();
             $table->bigInteger('price')->unsigned();
             $table->softDeletes();
             $table->timestamps();

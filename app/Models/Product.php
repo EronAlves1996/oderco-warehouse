@@ -43,7 +43,7 @@ class Product extends Model
         $product = $request->validate([
             'name' => ['required', 'unique:product,name', 'max:100'],
             'quantity' => ['required', 'numeric', 'integer', 'min:0'],
-            'picture_filename' => ['nullable', 'extensions:jpg,png'],
+            'picture_path' => ['nullable', 'extensions:jpg,png'],
             'price' => ['required', 'decimal:1,2', 'min:0']
         ]);
 
