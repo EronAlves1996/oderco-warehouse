@@ -42,14 +42,13 @@ const rules = {
   <section class="w-50 d-flex m-auto">
     <FormContext :state="state" :rules="rules">
       <div class="d-flex flex-column">
-        <FormField id="name" label="Nome" type="text" name="name" />
+        <FormField id="name" label="Nome" name="name" />
         <FormField
           id="quantity"
           label="Quantidade de Estoque"
-          type="number"
           name="quantity"
         />
-        <FormField id="price" label="Preço" type="number" name="price" />
+        <FormField id="price" label="Preço" name="price" />
       </div>
       <DefaultButton class-names="w-100">Finalizar</DefaultButton>
     </FormContext>

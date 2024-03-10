@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import type { RefSymbol } from "@vue/reactivity";
 import type { Validation } from "@vuelidate/core";
 
-type InputTypes = "text" | "number";
-
-const { id, label, type } = defineProps<{
+defineProps<{
   label: string;
   id: string;
-  type: InputTypes;
   name: string;
 }>();
 
@@ -22,7 +18,6 @@ const v$ = formControls?.v$;
 <template>
   <label :for="id" class="form-label">{{ label }}</label>
   <input
-    :type="type"
     class="form-control"
     :id="id"
     :name="name"
