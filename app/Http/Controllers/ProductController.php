@@ -48,7 +48,7 @@ class ProductController extends Controller
     {
         $status_code = 204;
         try {
-            DB::delete('delete product where public_id = ?', [$id]);
+            $product->delete();
         } catch (Excepetion $e) {
             $status_code = 409;
         }
