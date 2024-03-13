@@ -14,10 +14,14 @@ const state = reactive({
   name: "",
   quantity: 0,
   price: 0,
+  image: null,
 });
 const requiredWithMessage = withMessage("Campo é obrigatório", required);
 const numericWithMessage = withMessage("Permitido apenas números!", numeric);
 const nonNegative = withMessage("Campo não pode ser negativo!", minValue(0));
+const imageValidator = (a: File) => {
+  return a.type.endsWith("png") || a.type.endsWith("jpg");
+};
 const rules = {
   name: {
     requiredWithMessage,
@@ -35,6 +39,12 @@ const rules = {
     nonNegative,
     decimal: withMessage("Obrigatório que campo seja decimal!", decimal),
   },
+  image: {
+    imageValidator: withMessage(
+      "Necessário que imagem seja nos formatos png ou jpg",
+      imageValidator,
+    ),
+  },
 };
 </script>
 <template>
@@ -49,6 +59,7 @@ const rules = {
           name="quantity"
         />
         <FormField id="price" label="Preço" name="price" />
+        <ImageUploadField label="Imagem" id="image" name="image" />
       </div>
       <DefaultButton class-names="w-100">Finalizar</DefaultButton>
     </FormContext>
