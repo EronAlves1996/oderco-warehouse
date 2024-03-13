@@ -19,9 +19,11 @@ const state = reactive({
 const requiredWithMessage = withMessage("Campo é obrigatório", required);
 const numericWithMessage = withMessage("Permitido apenas números!", numeric);
 const nonNegative = withMessage("Campo não pode ser negativo!", minValue(0));
-const imageValidator = (a: File) => {
-  return a.type.endsWith("png") || a.type.endsWith("jpg");
-};
+const imageValidator = (f: File) =>
+  f === null ||
+  f === undefined ||
+  ["jpg", "png"].some((format) => f.type.endsWith(format));
+
 const rules = {
   name: {
     requiredWithMessage,
@@ -50,7 +52,7 @@ const rules = {
 <template>
   <PageHeader title="Novo Produto" />
   <section class="w-50 d-flex m-auto">
-    <FormContext :state="state" :rules="rules">
+    <FormContext :state="state" :rules="rules" :handle-submit="console.log">
       <div class="d-flex flex-column">
         <FormField id="name" label="Nome" name="name" />
         <FormField
@@ -61,7 +63,7 @@ const rules = {
         <FormField id="price" label="Preço" name="price" />
         <ImageUploadField label="Imagem" id="image" name="image" />
       </div>
-      <DefaultButton class-names="w-100">Finalizar</DefaultButton>
+      <DefaultButton class-names="w-100" type="submit">Finalizar</DefaultButton>
     </FormContext>
   </section>
 </template>
