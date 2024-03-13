@@ -48,11 +48,18 @@ const rules = {
     ),
   },
 };
+
+const handleSubmit = async (formData: FormData) => {
+  const response = await $fetch("/api/products/", {
+    method: "POST",
+    body: formData,
+  });
+};
 </script>
 <template>
   <PageHeader title="Novo Produto" />
   <section class="w-50 d-flex m-auto">
-    <FormContext :state="state" :rules="rules" :handle-submit="console.log">
+    <FormContext :state="state" :rules="rules" :handle-submit="handleSubmit">
       <div class="d-flex flex-column">
         <FormField id="name" label="Nome" name="name" />
         <FormField

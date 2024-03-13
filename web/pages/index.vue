@@ -9,13 +9,13 @@ if (defineTitle) {
 const {
   data: { value },
   error,
-} = await useFetch("/api/products");
+} = await useFetch("/api/products", { server: true });
 
 const productSchema = z.object({
   public_id: z.string().uuid(),
   name: z.string(),
   quantity: z.number().nonnegative().int(),
-  picture_path: z.string().optional(),
+  picture_path: z.nullable(z.string()),
   price: z.number(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
@@ -41,7 +41,7 @@ const products = productsApiSchema.parse(value);
       <tbody>
         <tr v-for="p in products" :key="p.public_id">
           <td>
-            <img :src="p.picture_path" />
+            <img :src="p.picture_path ?? undefined" />
           </td>
           <td>{{ p.public_id }}</td>
           <td>{{ p.name }}</td>
