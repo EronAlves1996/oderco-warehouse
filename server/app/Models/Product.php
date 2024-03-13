@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 
 class Product extends Model
@@ -28,7 +29,7 @@ class Product extends Model
 
     private static $base_validation = [
         'quantity' => ['required', 'numeric', 'integer', 'min:0'],
-        'picture_path' => ['nullable', 'ends_with:jpg,png'],
+        'image' => ['nullable', 'extensions:jpg,png'],
         'price' => ['required', 'decimal:1,2', 'min:0']
     ];
 
@@ -59,6 +60,9 @@ class Product extends Model
     public static function newFromRequest(Request $request): Product
     {
         $product = $request->validate(array_merge(static::$base_validation, ['name' => static::$name_validations['creation']]));
+
+        $fileName = $product['image']->storePublicly();
+        $product['picture_path'] = asset('/storage/' . $fileName);
 
         return Product::create($product);
     }
