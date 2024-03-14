@@ -29,18 +29,14 @@ class Handler extends ExceptionHandler
             //
         });
 
-        $this->renderable(function (ValidationException $e, Request $r) {
-            return response()->json(
-                new ErrorDetails(
-                    type: $r->getBaseUrl() . "/problems/unprocessable-entity",
-                    title: "Requisição inválida",
-                    detail: $e->errors(),
-                    instance: $r->getUri(),
-                    status: 422
-                ),
-                422,
-                ["Content-Type" => "application/problem+json"]
-            );
-        });
+        $this->renderable(
+            fn(ValidationException $e, Request $r) => (new ErrorDetails(
+                type: $r->getBaseUrl() . "/problems/unprocessable-entity",
+                title: "Requisição inválida",
+                detail: $e->errors(),
+                status: 422,
+                request: $r
+            ))->emit()
+        );
     }
 }

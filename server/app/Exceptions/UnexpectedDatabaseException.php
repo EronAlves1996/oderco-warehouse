@@ -10,18 +10,12 @@ class UnexpectedDatabaseException extends Exception
 {
     public function render(Request $r): Response
     {
-        return response()->json(
-            new ErrorDetails(
-                instance: $r->getUri(),
-                type: $r->getBaseUrl() . "/probs/erro-acesso",
-                detail: "Não foi possível realizar operação! Contate o suporte!",
-                status: 500,
-                title: "Erro de Acesso"
-            ),
-            500,
-            [
-                "Content-Type" => "application/problem+json",
-            ]
-        );
+        return (new ErrorDetails(
+            request: $r,
+            type: $r->getBaseUrl() . "/probs/erro-acesso",
+            detail: "Não foi possível realizar operação! Contate o suporte!",
+            status: 500,
+            title: "Erro de Acesso"
+        ))->emit();
     }
 }
