@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -25,6 +27,14 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (ValidationException $e, Request $r) {
+            return response()->json(new ErrorDetails(type: $r->getBaseUrl() . "/problems/unprocessable-entity",
+                title: "Requisição inválida",
+                detail: $e->errors(),
+                instance: $r->getUri(),
+                status: 422), 422, ["Content-Type" => "application/problem+json"]);
         });
     }
 }
