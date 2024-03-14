@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Exceptions\UnexpectedDatabaseException;
+use Exception;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,30 +16,36 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'product';
+    protected $table = "product";
 
-    protected $guarded = ['id', 'public_id', 'created_at', 'updated_at', 'deleted_at'];
+    protected $guarded = [
+        "id",
+        "public_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    ];
 
-    protected $hidden = ['id', 'deleted_at'];
+    protected $hidden = ["id", "deleted_at"];
 
-    protected $appends = ['price'];
+    protected $appends = ["price"];
 
     private static $name_validations = [
-        'update' => ['required', 'max:100'],
-        'creation' => ['required', 'unique:product,name', 'max:100']
+        "update" => ["required", "max:100"],
+        "creation" => ["required", "unique:product,name", "max:100"],
     ];
 
     private static $base_validation = [
-        'quantity' => ['required', 'numeric', 'integer', 'min:0'],
-        'image' => ['nullable', 'extensions:jpg,png'],
-        'price' => ['required', 'decimal:1,2', 'min:0']
+        "quantity" => ["required", "numeric", "integer", "min:0"],
+        "image" => ["nullable", "extensions:jpg,png"],
+        "price" => ["required", "decimal:1,2", "min:0"],
     ];
 
     private static $public_id_validation = [
-        'public_id' => ['required', 'uuid']
+        "public_id" => ["required", "uuid"],
     ];
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
 
@@ -59,21 +67,37 @@ class Product extends Model
 
     public static function newFromRequest(Request $request): Product
     {
-        $product = $request->validate(array_merge(static::$base_validation, ['name' => static::$name_validations['creation']]));
+        $product = $request->validate(
+            array_merge(static::$base_validation, [
+                "name" => static::$name_validations["creation"],
+            ])
+        );
 
-        $fileName = $product['image']->storePublicly();
-        $product['picture_path'] = asset('/storage/' . $fileName);
+        $fileName = $product["image"]->storePublicly();
+        $product["picture_path"] = asset("/storage/" . $fileName);
 
-        return Product::create($product);
+        try {
+            return Product->query()::create($product);
+        } catch (Exception $e) {
+            // Providencia o rollback da imagem
+            Storage::delete($fileName);
+            throw new UnexpectedDatabaseException();
+        }
     }
 
-    public function updateFromRequest(Request $request)
+    public function updateFromRequest(Request $request): void
     {
-        if ($request->get('public_id') !== $this->public_id) {
-            throw new Exception('Not allowed to update another entity');
+        if ($request->get("public_id") !== $this->public_id) {
+            throw new Exception("Not allowed to update another entity");
         }
 
-        $toUpdate = $request->validate(array_merge(static::$base_validation, ['name' => static::$name_validations['update']], static::$public_id_validation));
+        $toUpdate = $request->validate(
+            array_merge(
+                static::$base_validation,
+                ["name" => static::$name_validations["update"]],
+                static::$public_id_validation
+            )
+        );
 
         $this->fill($toUpdate);
         $this->save();

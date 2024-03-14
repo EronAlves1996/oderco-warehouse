@@ -15,9 +15,9 @@ class Handler extends ExceptionHandler
      * @var array<int, string>
      */
     protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
+        "current_password",
+        "password",
+        "password_confirmation",
     ];
 
     /**
@@ -30,11 +30,17 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (ValidationException $e, Request $r) {
-            return response()->json(new ErrorDetails(type: $r->getBaseUrl() . "/problems/unprocessable-entity",
-                title: "Requisição inválida",
-                detail: $e->errors(),
-                instance: $r->getUri(),
-                status: 422), 422, ["Content-Type" => "application/problem+json"]);
+            return response()->json(
+                new ErrorDetails(
+                    type: $r->getBaseUrl() . "/problems/unprocessable-entity",
+                    title: "Requisição inválida",
+                    detail: $e->errors(),
+                    instance: $r->getUri(),
+                    status: 422
+                ),
+                422,
+                ["Content-Type" => "application/problem+json"]
+            );
         });
     }
 }
