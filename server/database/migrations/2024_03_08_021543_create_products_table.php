@@ -10,18 +10,18 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('product', function (Blueprint $table) {
+        Schema::create("product", function (Blueprint $table) {
             $table->id();
-            $table->uuid('public_id');
-            $table->string('name', 100);
-            $table->integer('quantity')->unsigned();
-            $table->string('picture_path')->nullable();
-            $table->bigInteger('price')->unsigned();
+            $table->uuid("public_id");
+            $table->string("name", 100);
+            $table->integer("quantity")->unsigned();
+            $table->string("picture")->nullable();
+            $table->bigInteger("price")->unsigned();
             $table->softDeletes();
             $table->timestamps();
 
-            $table->unique('name', 'unique_name');
-            $table->unique('public_id', 'unique_public_id');
+            $table->unique("name", "unique_name");
+            $table->unique("public_id", "unique_public_id");
         });
     }
 
@@ -30,6 +30,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('product');
+        Schema::dropIfExists("product");
     }
 };

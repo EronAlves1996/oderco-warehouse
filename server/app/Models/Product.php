@@ -65,6 +65,13 @@ class Product extends Model
         )->shouldCache();
     }
 
+    protected function picture(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => asset("/storage/" . $value)
+        )->shouldCache();
+    }
+
     public static function newFromRequest(Request $request): Product
     {
         $product = $request->validate(
@@ -74,7 +81,7 @@ class Product extends Model
         );
 
         $fileName = $product["image"]->storePublicly();
-        $product["picture_path"] = asset("/storage/" . $fileName);
+        $product["picture"] = $fileName;
 
         try {
             return Product->query()::create($product);
