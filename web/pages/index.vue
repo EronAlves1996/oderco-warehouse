@@ -1,28 +1,7 @@
 <script setup lang="ts">
   import { z } from 'zod';
 
-  const defineTitle = inject<(title: string) => void>('setTitle');
-  if (defineTitle) {
-    defineTitle('Lista de Produtos Cadastrados');
-  }
-
-  const {
-    data: { value },
-    error,
-  } = await useFetch('/api/products', { server: true });
-
-  const productSchema = z.object({
-    public_id: z.string().uuid(),
-    name: z.string(),
-    quantity: z.number().nonnegative().int(),
-    picture: z.nullable(z.string()),
-    price: z.number(),
-    created_at: z.string().datetime(),
-    updated_at: z.string().datetime(),
-  });
-
-  const productsApiSchema = z.array(productSchema);
-  const products = productsApiSchema.parse(value);
+  const products = await useProducts();
 </script>
 <template>
   <PageHeader
@@ -46,7 +25,7 @@
           v-for="p in products"
           :key="p.public_id">
           <td>
-            <img :src="p.picture_path ?? undefined" />
+            <img :src="p.picture ?? undefined" />
           </td>
           <td>{{ p.public_id }}</td>
           <td>{{ p.name }}</td>

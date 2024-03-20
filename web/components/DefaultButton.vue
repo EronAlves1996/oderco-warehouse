@@ -1,16 +1,19 @@
 <script setup lang="ts">
-const { classNames } = defineProps<{
-  classNames?: string;
-  type?: "button" | "submit";
-}>();
+  const { classNames } = defineProps<{
+    classNames?: string;
+    type?: 'button' | 'submit';
+    outline?: boolean;
+  }>();
 </script>
 <template>
   <button
     :type="type ? type : 'button'"
     :class="
-      'btn btn-primary py-2 px-4 fw-bold ' + (classNames ? classNames : '')
-    "
-  >
+      'btn py-2 px-4 fw-bold ' +
+      (classNames ? classNames : '') +
+      ' ' +
+      (outline ? 'btn-outline-primary' : 'btn-primary')
+    ">
     <slot />
   </button>
 </template>
