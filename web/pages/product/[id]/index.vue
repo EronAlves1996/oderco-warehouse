@@ -12,12 +12,13 @@
     class="d-flex flex-column w-50 m-auto pt-5 justify-content-between gap-5">
     <div class="d-flex gap-4">
       <div
-        class="border border-3 rounded"
+        class="border border-3 rounded d-flex align-items-center justify-content-center"
         style="width: 373px; height: 373px">
         <img
           :src="product.picture ?? undefined"
           :alt="product.name"
-          v-if="product.picture" />
+          v-if="product.picture"
+          class="w-100" />
       </div>
       <div class="d-flex flex-column gap-4">
         <div class="d-flex flex-column gap-2 mt-5">

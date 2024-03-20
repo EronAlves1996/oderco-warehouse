@@ -68,7 +68,9 @@ class Product extends Model
     protected function picture(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => asset("/storage/" . $value)
+            get: fn(string|null $value) => is_null($value)
+                ? ""
+                : asset("/storage/" . $value)
         )->shouldCache();
     }
 
