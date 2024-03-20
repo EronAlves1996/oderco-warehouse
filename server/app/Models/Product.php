@@ -80,14 +80,18 @@ class Product extends Model
             ])
         );
 
-        $fileName = $product["image"]->storePublicly();
-        $product["picture"] = $fileName;
+        if (array_key_exists("image", $product)) {
+            $fileName = $product["image"]->storePublicly();
+            $product["picture"] = $fileName;
+        }
 
         try {
-            return Product->query()::create($product);
+            return Product::query()->create($product);
         } catch (Exception $e) {
             // Providencia o rollback da imagem
-            Storage::delete($fileName);
+            if (array_key_exists("image", $product)) {
+                Storage::delete($fileName);
+            }
             throw new UnexpectedDatabaseException();
         }
     }
