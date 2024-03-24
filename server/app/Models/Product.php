@@ -117,9 +117,8 @@ class Product extends Model
         if (array_key_exists("image", $requestArray)) {
             $fileName = $requestArray["image"]->storePublicly();
             $requestArray["picture"] = $fileName;
-            return $requestArray;
         }
-        return null;
+        return $requestArray;
     }
 
     public function updateFromRequest(Request $request): void
