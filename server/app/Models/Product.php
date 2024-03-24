@@ -29,7 +29,7 @@ class Product extends Model
 
     protected $hidden = ["id", "deleted_at"];
 
-    protected $appends = ["price"];
+    protected $appends = ["price", "picture"];
 
     private static $name_validations = [
         "update" => ["required", "max:100"],
@@ -83,13 +83,13 @@ class Product extends Model
             ])
         );
 
-        static::saveImage($product);
+        $productWithImage = static::saveImage($product);
 
-        static::safeExecute(
-            fn() => Product::query()->create($product),
-            function () use ($product) {
-                if (array_key_exists("picture", $product)) {
-                    Storage::delete($product["picture"]);
+        return static::safeExecute(
+            fn() => Product::query()->create($productWithImage),
+            function () use ($productWithImage) {
+                if (array_key_exists("picture", $productWithImage)) {
+                    Storage::delete($productWithImage["picture"]);
                 }
                 throw new UnexpectedDatabaseException();
             }
@@ -99,7 +99,7 @@ class Product extends Model
      * @param mixed $runnable
      * @param mixed $recoverFunction
      */
-    private static function safeExecute($runnable, $recoverFunction): Product
+    private static function safeExecute($runnable, $recoverFunction)
     {
         try {
             return $runnable();
@@ -110,12 +110,16 @@ class Product extends Model
 
     /**
      * @param array<int,mixed> $requestArray
+     * @return array<int,mixed>|null
      */
-    private static function saveImage(array $requestArray): void
+    private static function saveImage(array $requestArray): array
     {
         if (array_key_exists("image", $requestArray)) {
-            $requestArray["picture"] = $requestArray["image"]->storePublicly();
+            $fileName = $requestArray["image"]->storePublicly();
+            $requestArray["picture"] = $fileName;
+            return $requestArray;
         }
+        return null;
     }
 
     public function updateFromRequest(Request $request): void
@@ -134,16 +138,17 @@ class Product extends Model
             )
         );
 
-        static::saveImage($toUpdate);
+        $toUpdateWithImage = static::saveImage($toUpdate);
 
+        var_dump($toUpdateWithImage);
         static::safeExecute(
-            function () use ($toUpdate) {
-                $this->fill($toUpdate);
+            function () use ($toUpdateWithImage) {
+                $this->fill($toUpdateWithImage);
                 $this->save();
             },
-            function () use ($toUpdate) {
-                if (array_key_exists("picture", $toUpdate)) {
-                    Storage::delete($toUpdate["picture"]);
+            function () use ($toUpdateWithImage) {
+                if (array_key_exists("picture", $toUpdateWithImage)) {
+                    Storage::delete($toUpdateWithImage["picture"]);
                 }
                 throw new UnexpectedDatabaseException();
             }
