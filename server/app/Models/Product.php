@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\ForbiddenOperationException;
 use App\Exceptions\UnexpectedDatabaseException;
 use Exception;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -82,26 +83,47 @@ class Product extends Model
             ])
         );
 
-        if (array_key_exists("image", $product)) {
-            $fileName = $product["image"]->storePublicly();
-            $product["picture"] = $fileName;
-        }
+        static::saveImage($product);
 
-        try {
-            return Product::query()->create($product);
-        } catch (Exception $e) {
-            // Providencia o rollback da imagem
-            if (array_key_exists("image", $product)) {
-                Storage::delete($fileName);
+        static::safeExecute(
+            fn() => Product::query()->create($product),
+            function () use ($product) {
+                if (array_key_exists("picture", $product)) {
+                    Storage::delete($product["picture"]);
+                }
+                throw new UnexpectedDatabaseException();
             }
-            throw new UnexpectedDatabaseException();
+        );
+    }
+    /**
+     * @param mixed $runnable
+     * @param mixed $recoverFunction
+     */
+    private static function safeExecute($runnable, $recoverFunction): Product
+    {
+        try {
+            return $runnable();
+        } catch (Exception $e) {
+            $recoverFunction();
+        }
+    }
+
+    /**
+     * @param array<int,mixed> $requestArray
+     */
+    private static function saveImage(array $requestArray): void
+    {
+        if (array_key_exists("image", $requestArray)) {
+            $requestArray["picture"] = $requestArray["image"]->storePublicly();
         }
     }
 
     public function updateFromRequest(Request $request): void
     {
-        if ($request->get("public_id") !== $this->public_id) {
-            throw new Exception("Not allowed to update another entity");
+        if ($request->input("public_id") !== $this->public_id) {
+            throw new ForbiddenOperationException(
+                "Não é possível atualizar uma entidade diferente desta!"
+            );
         }
 
         $toUpdate = $request->validate(
@@ -112,7 +134,19 @@ class Product extends Model
             )
         );
 
-        $this->fill($toUpdate);
-        $this->save();
+        static::saveImage($toUpdate);
+
+        static::safeExecute(
+            function () use ($toUpdate) {
+                $this->fill($toUpdate);
+                $this->save();
+            },
+            function () use ($toUpdate) {
+                if (array_key_exists("picture", $toUpdate)) {
+                    Storage::delete($toUpdate["picture"]);
+                }
+                throw new UnexpectedDatabaseException();
+            }
+        );
     }
 }
