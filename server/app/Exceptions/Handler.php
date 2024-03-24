@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -35,6 +36,16 @@ class Handler extends ExceptionHandler
                 title: "Requisição inválida",
                 detail: $e->errors(),
                 status: 422,
+                request: $r
+            ))->emit()
+        );
+
+        $this->renderable(
+            fn(NotFoundHttpException $e, Request $r) => (new ErrorDetails(
+                type: $r->getBaseUrl() . "/problems/nao-encontrado",
+                title: "Não encontrado",
+                detail: "Entidade ou URL não encontrada ou não existe",
+                status: 404,
                 request: $r
             ))->emit()
         );
