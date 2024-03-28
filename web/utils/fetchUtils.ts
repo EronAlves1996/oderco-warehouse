@@ -1,13 +1,14 @@
 import { z } from 'zod';
 
+export const errorDetailsSchema = z.object({
+  detail: z.string().or(z.record(z.array(z.string()))),
+  instance: z.string(),
+  status: z.number().int(),
+  title: z.string(),
+  type: z.string(),
+});
+
 export const handleError = (_data: any) => {
-  const errorDetailsSchema = z.object({
-    detail: z.string().or(z.record(z.array(z.string()))),
-    instance: z.string(),
-    status: z.number().int(),
-    title: z.string(),
-    type: z.string(),
-  });
   const result = errorDetailsSchema.safeParse(_data);
 
   if (result.success) {
