@@ -39,7 +39,7 @@ class Product extends Model
     private static $base_validation = [
         "quantity" => ["required", "numeric", "integer", "min:0"],
         "image" => ["nullable", "extensions:jpg,png"],
-        "price" => ["required", "decimal:1,2", "min:0"],
+        "price" => ["required", "decimal:0,2", "min:0"],
     ];
 
     private static $public_id_validation = [
