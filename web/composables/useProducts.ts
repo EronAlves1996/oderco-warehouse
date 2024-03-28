@@ -1,3 +1,4 @@
+import type { RefSymbol } from '@vue/reactivity';
 import { z } from 'zod';
 
 const productSchema = z.object({
@@ -8,6 +9,17 @@ const productSchema = z.object({
   price: z.number(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
+});
+
+const paginatedProductSchema = z.object({
+  data: z.array(productSchema),
+  links: z.array(
+    z.object({
+      active: z.boolean(),
+      label: z.string(),
+      url: z.string().or(z.null()),
+    }),
+  ),
 });
 
 const handleError = (error: any) => {
@@ -26,20 +38,21 @@ const handleError = (error: any) => {
   });
 };
 
-export const useProducts = async () => {
-  const {
-    data: { value },
-    error,
-  } = await useFetch('/api/products', { server: true });
-
-  if (error?.value?.data) {
-    const {
-      value: { data },
-    } = error;
-    handleError(data);
-  }
-
-  return z.array(productSchema).parse(value);
+export const useProducts = async (page: Ref<number>) => {
+  const { data, refresh } = await useFetch('/api/products', {
+    query: {
+      page,
+    },
+    watch: [page],
+    transform: (t) => paginatedProductSchema.parse(t),
+    onResponseError: ({ response }) => {
+      if (response?._data) {
+        const { _data } = response;
+        handleError(_data);
+      }
+    },
+  });
+  return { data, refresh };
 };
 
 export const useProduct = async (id: string) => {

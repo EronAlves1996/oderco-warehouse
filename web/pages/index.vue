@@ -1,7 +1,28 @@
 <script setup lang="ts">
-  import { z } from 'zod';
+  const route = useRoute();
+  const { push } = useRouter();
+  const pageNumber = ref(parseInt(String(route.query.page ?? 1)));
+  const { data, refresh } = await useProducts(pageNumber);
 
-  const products = await useProducts();
+  onBeforeRouteUpdate(() => {
+    refresh();
+  });
+
+  watch(pageNumber, () => {
+    push({ path: '.', query: { page: pageNumber.value } });
+  });
+
+  const navigateToPage = (e: MouseEvent) => {
+    const button = e?.target as HTMLButtonElement;
+    const possibleLink = data?.value?.links
+      .filter(({ label }) => button.textContent?.includes(label))
+      .filter(({ url }) => url)
+      .map(({ url }) => url?.split('=')[1]);
+
+    if (possibleLink?.length != 0) {
+      pageNumber.value = Number(possibleLink?.[0] ?? 1);
+    }
+  };
 </script>
 <template>
   <PageHeader
@@ -22,7 +43,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="p in products"
+          v-for="p in data?.data"
           :key="p.public_id">
           <td>
             <img :src="p.picture ?? undefined" />
@@ -37,5 +58,13 @@
         </tr>
       </tbody>
     </table>
+    <footer class="d-flex justify-content-center gap-2">
+      <DefaultButton
+        v-for="link in data?.links"
+        :outline="!link.active"
+        @click="navigateToPage"
+        >{{ link.label }}
+      </DefaultButton>
+    </footer>
   </section>
 </template>

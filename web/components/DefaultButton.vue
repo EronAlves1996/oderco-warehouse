@@ -3,6 +3,7 @@
     classNames?: string;
     type?: 'button' | 'submit';
     outline?: boolean;
+    click?: (p: MouseEvent) => void;
   }>();
 </script>
 <template>
@@ -13,7 +14,8 @@
       (classNames ? classNames : '') +
       ' ' +
       (outline ? 'btn-outline-primary' : 'btn-primary')
-    ">
+    "
+    @click="click">
     <slot />
   </button>
 </template>
