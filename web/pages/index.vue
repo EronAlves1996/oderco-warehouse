@@ -2,11 +2,7 @@
   const route = useRoute();
   const { push } = useRouter();
   const pageNumber = ref(parseInt(String(route.query.page ?? 1)));
-  const { data, refresh } = await useProducts(pageNumber);
-
-  onBeforeRouteUpdate(() => {
-    refresh();
-  });
+  const { data } = await useProducts(pageNumber);
 
   watch(pageNumber, () => {
     push({ path: '.', query: { page: pageNumber.value } });

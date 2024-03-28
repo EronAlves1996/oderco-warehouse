@@ -38,8 +38,8 @@ const handleError = (error: any) => {
   });
 };
 
-export const useProducts = async (page: Ref<number>) => {
-  const { data, refresh } = await useFetch('/api/products', {
+export const useProducts = (page: Ref<number>) =>
+  useFetch('/api/products', {
     query: {
       page,
     },
@@ -52,8 +52,6 @@ export const useProducts = async (page: Ref<number>) => {
       }
     },
   });
-  return { data, refresh };
-};
 
 export const useProduct = async (id: string) => {
   const {
