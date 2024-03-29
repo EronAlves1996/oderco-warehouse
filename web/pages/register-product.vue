@@ -11,8 +11,8 @@
     await $fetch('/api/products/', {
       method: 'POST',
       body: formData,
-      onResponse: async ({ response: { headers } }) => {
-        if (headers.has('location')) {
+      onResponse: async ({ response: { headers, ok } }) => {
+        if (ok && headers.has('location')) {
           const location = headers.get('location');
           const splitted = location?.split('/');
           await navigateTo('/product/' + splitted?.[3]);
