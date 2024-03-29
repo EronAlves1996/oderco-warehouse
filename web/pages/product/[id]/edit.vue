@@ -18,8 +18,10 @@
     await $fetch('/api/products/' + id + '?_method=PUT', {
       method: 'POST',
       body: formData,
-      onResponse: async () => {
-        await navigateTo('/product/' + id);
+      onResponse: async ({ response: { ok } }) => {
+        if (ok) {
+          await navigateTo('/product/' + id);
+        }
       },
       onResponseError: ({ response: { _data } }) => handleError(_data),
     });

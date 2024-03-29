@@ -18,13 +18,12 @@ class ProductController extends Controller
         "quantity" => ["required", "numeric", "integer", "min:0"],
         "image" => ["nullable", "extensions:jpg,png"],
         "price" => ["required", "decimal:0,2", "min:0"],
+        "name" => ["required", "unique:product,name", "max:100"],
     ];
 
-    private static $name_validations = [
-        "update" => ["required", "max:100"],
-        "creation" => ["required", "unique:product,name", "max:100"],
+    private static $public_id_validation = [
+        "public_id" => ["required", "uuid"],
     ];
-
     /**
      * @param array<int,mixed> $requestArray
      * @return array<int,mixed>|null
@@ -70,11 +69,7 @@ class ProductController extends Controller
      */
     public function store(Request $request): Response|ResponseFactory
     {
-        $product = $request->validate(
-            array_merge(static::$base_validation, [
-                "name" => static::$name_validations["creation"],
-            ])
-        );
+        $product = $request->validate(static::$base_validation);
 
         $productWithImage = static::saveImage($product);
 
@@ -107,18 +102,14 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product): void
     {
-        if ($request->input("public_id") !== $this->public_id) {
+        if ($request->input("public_id") !== $product->public_id) {
             throw new ForbiddenOperationException(
                 "Não é possível atualizar uma entidade diferente desta!"
             );
         }
 
         $toUpdate = $request->validate(
-            array_merge(
-                static::$base_validation,
-                ["name" => static::$name_validations["update"]],
-                static::$public_id_validation
-            )
+            array_merge(static::$base_validation, static::$public_id_validation)
         );
 
         $toUpdateWithImage = static::saveImage($toUpdate);
