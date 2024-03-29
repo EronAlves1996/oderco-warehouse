@@ -136,12 +136,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): Response|ResponseFactory
     {
-        $status_code = 204;
         try {
             $product->delete();
         } catch (Exception $e) {
-            $status_code = 409;
+            throw new UnexpectedDatabaseException();
         }
-        return response(null, $status_code);
+        return response(null, 204);
     }
 }
