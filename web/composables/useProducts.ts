@@ -1,4 +1,5 @@
 import type { RefSymbol } from '@vue/reactivity';
+import type { LocationQueryValue } from 'vue-router';
 import { z } from 'zod';
 
 const productSchema = z.object({
@@ -38,12 +39,13 @@ const handleError = (error: any) => {
   });
 };
 
-export const useProducts = (page: Ref<number>) =>
+export const useProducts = (page: Ref<number>, search: Ref<string>) =>
   useFetch('/api/products', {
     query: {
       page,
+      s: search,
     },
-    watch: [page],
+    watch: [page, search],
     transform: (t) => paginatedProductSchema.parse(t),
     onResponseError: ({ response }) => {
       if (response?._data) {

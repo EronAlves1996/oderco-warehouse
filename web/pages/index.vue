@@ -2,10 +2,22 @@
   const route = useRoute();
   const { push } = useRouter();
   const pageNumber = ref(parseInt(String(route.query.page ?? 1)));
-  const { data } = await useProducts(pageNumber);
+  const searchString = ref('');
+  watch(
+    () => route.query.s,
+    () => (searchString.value = String(route.query.s)),
+    { immediate: true },
+  );
+  const { data } = await useProducts(pageNumber, searchString);
 
   watch(pageNumber, () => {
-    push({ path: '.', query: { page: pageNumber.value } });
+    push({
+      path: '.',
+      query: {
+        page: pageNumber.value,
+        searchString: searchString?.value ?? undefined,
+      },
+    });
   });
 
   const navigateToPage = (e: MouseEvent) => {

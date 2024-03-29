@@ -1,6 +1,15 @@
 <script setup lang="ts">
-  const sectionTitle = ref('');
-  provide('setTitle', (title: string) => (sectionTitle.value = title));
+  const {
+    query: { s },
+  } = useRoute();
+  const search = ref(s ?? '');
+  const debounceTimeout = ref<any>(null);
+  watch(search, () => {
+    clearTimeout(debounceTimeout.value);
+    debounceTimeout.value = setTimeout(() => {
+      navigateTo({ path: '/', query: { s: search.value } });
+    }, 1000);
+  });
 </script>
 <template>
   <header
@@ -12,7 +21,8 @@
       type="text"
       class="form-control w-75"
       placeholder="Pesquisar..."
-      aria-label="Pesquisar..." />
+      aria-label="Pesquisar..."
+      v-model="search" />
   </header>
   <section class="py-4 px-5 d-flex flex-column">
     <NuxtPage />

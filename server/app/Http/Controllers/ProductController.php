@@ -54,9 +54,15 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): LengthAwarePaginator
+    public function index(Request $r): LengthAwarePaginator
     {
-        return Product::query()->paginate(2);
+        $searchQuery = $r->query("s");
+        if (is_null($searchQuery)) {
+            return Product::query()->paginate(10);
+        }
+        return Product::query()
+            ->where("name", "like", "%" . $searchQuery . "%")
+            ->paginate(10);
     }
 
     /**
