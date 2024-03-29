@@ -90,19 +90,26 @@ const deleteProduct = async () => {
               <img :src="p.picture ?? undefined" class="w-100" />
             </div>
           </td>
-          <td>{{ p.public_id }}</td>
-          <td class="w-50">{{ p.name }}</td>
-          <td class="d-flex justify-content-around px-3">
-            <NuxtLink :to="`/product/${p.public_id}`">
-              <ViewIcon />
-            </NuxtLink>
-            <NuxtLink :to="`/product/${p.public_id}/edit`">
-              <EditIcon />
-            </NuxtLink>
-            <button type="button" data-toggle="modal" style="cursor: pointer"
-              @click="openDeleteModal(p.public_id, p.name)" class="btn btn-link">
-              <TrashIcon />
-            </button>
+          <td class="align-middle">
+            {{ p.public_id }}
+          </td>
+          <td class="w-50 align-middle">{{ p.name }}</td>
+          <td class="align-middle">
+            <div class="d-flex justify-content-around px-3">
+              <NuxtLink :to="`/product/${p.public_id}`">
+                <button type="button" class="btn btn-link">
+                  <ViewIcon />
+                </button>
+              </NuxtLink>
+              <NuxtLink :to="`/product/${p.public_id}/edit`">
+                <button type="button" class="btn btn-link">
+                  <EditIcon />
+                </button>
+              </NuxtLink>
+              <button type="button" @click="openDeleteModal(p.public_id, p.name)" class="btn btn-link">
+                <TrashIcon />
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
