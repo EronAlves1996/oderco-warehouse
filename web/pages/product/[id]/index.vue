@@ -1,10 +1,25 @@
 <script setup lang="ts">
+  import { Mask } from 'maska';
+
   const {
     params: { id },
   } = useRoute();
   const { back } = useRouter();
 
   const product = await useProduct(id as string);
+  const mask = new Mask({
+    mask: 'R$ 0,99',
+    tokens: {
+      '0': {
+        multiple: true,
+        pattern: /\d/,
+      },
+      '9': {
+        optional: true,
+        pattern: /\d/,
+      },
+    },
+  });
 </script>
 <template>
   <PageHeader title="Detalhes do Produto" />
@@ -26,7 +41,17 @@
           <p class="fw-bold fs-5">{{ product.name }}</p>
           <p>Quantidade disponível: {{ product.quantity }}</p>
         </div>
-        <p class="text-primary fs-2 text fw-bold">R$ {{ product.price }}</p>
+        <p class="text-primary fs-2 text fw-bold">
+          {{
+            product.price === Math.trunc(product.price)
+              ? mask.masked(String(product.price)).concat(',00')
+              : mask
+                  .masked(String(product.price).replace('.', ','))
+                  .split(',')
+                  .map((i, n) => (n === 1 ? i.padEnd(2, '0') : i))
+                  .join(',')
+          }}
+        </p>
       </div>
     </div>
     <div class="d-flex gap-4 justify-content-center w-75 mx-auto">

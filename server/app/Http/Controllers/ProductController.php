@@ -109,7 +109,11 @@ class ProductController extends Controller
         }
 
         $toUpdate = $request->validate(
-            array_merge(static::$base_validation, static::$public_id_validation)
+            array_merge(
+                static::$base_validation,
+                static::$public_id_validation,
+                ["name" => "required", "max:100"]
+            )
         );
 
         $toUpdateWithImage = static::saveImage($toUpdate);

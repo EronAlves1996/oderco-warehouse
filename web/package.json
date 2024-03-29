@@ -15,6 +15,7 @@
     "@vuelidate/validators": "^2.0.4",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "maska": "^2.1.11",
     "nuxt": "^3.10.3",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
