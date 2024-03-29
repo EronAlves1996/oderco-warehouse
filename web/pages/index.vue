@@ -108,8 +108,11 @@ const deleteProduct = async () => {
       </tbody>
     </table>
     <footer class="d-flex justify-content-center gap-2">
-      <DefaultButton v-for="link in data?.links" :outline="!link.active" @click="navigateToPage">{{ link.label }}
-      </DefaultButton>
+      <template v-for="link in data?.links" :key="link.label">
+        <DefaultButton v-if="link.url" :outline="!link.active" @click="navigateToPage">
+          {{ link.label }}
+        </DefaultButton>
+      </template>
     </footer>
     <ActionModal>
       <div class="p-5 d-flex flex-column gap-4">
