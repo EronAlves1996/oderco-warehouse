@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -32,7 +33,7 @@ class Handler extends ExceptionHandler
 
         $this->renderable(
             fn(ValidationException $e, Request $r) => (new ErrorDetails(
-                type: $r->getBaseUrl() . "/problems/unprocessable-entity",
+                type: "unprocessable-entity",
                 title: "Requisição inválida",
                 detail: $e->errors(),
                 status: 422,
@@ -42,10 +43,20 @@ class Handler extends ExceptionHandler
 
         $this->renderable(
             fn(NotFoundHttpException $e, Request $r) => (new ErrorDetails(
-                type: $r->getBaseUrl() . "/problems/nao-encontrado",
+                type: "nao-encontrado",
                 title: "Não encontrado",
                 detail: "Entidade ou URL não encontrada ou não existe",
                 status: 404,
+                request: $r
+            ))->emit()
+        );
+
+        $this->renderable(
+            fn(QueryException $e, Request $r) => (new ErrorDetails(
+                type: "erro-de-banco",
+                title: "Erro de Banco de Dados",
+                detail: "Não foi possível conectar ao banco",
+                status: 500,
                 request: $r
             ))->emit()
         );
