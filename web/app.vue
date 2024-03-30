@@ -1,13 +1,18 @@
 <script setup lang="ts">
-  const {
-    query: { s },
-  } = useRoute();
-  const search = ref(s ?? '');
+  const route = useRoute();
+  const { push } = useRouter();
+  const search = ref(route.query.s ?? '');
   const debounceTimeout = ref<any>(null);
   watch(search, () => {
     clearTimeout(debounceTimeout.value);
     debounceTimeout.value = setTimeout(() => {
-      navigateTo({ path: '/', query: { s: search.value } });
+      push({
+        path: '.',
+        query: {
+          ...route.query,
+          s: search.value,
+        },
+      });
     }, 1000);
   });
 </script>
