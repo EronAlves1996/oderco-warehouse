@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: oderco-warehouse-db
     image: mysql:latest
     command: --init-file /data/application/init.sql
     volumes:
@@ -8,3 +9,20 @@ services:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - 3306:3306
+  server:
+    build: ./server
+    depends_on:
+      - db
+    ports:
+      - 9000:9000 
+    environment:
+      APP_ENV: local
+      APP_KEY: base64:4JFY6GLzEcpmULIrp/5B+gVQOgSg6JmkkeSEjwUDNKA=
+      APP_NAME: Oderco Warehouse
+      DB_CONNECTION: mysql 
+      DB_HOST: oderco-warehouse-db
+      DB_PORT: 3306
+      DB_DATABASE: oderco
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      FILESYSTEM_DISK: public
