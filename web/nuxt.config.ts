@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/api/**': {
       proxy: {
-        to: 'http://127.0.0.1:8000/api/**',
+        to: `${process.env.NUXT_SERVER_URL}/api/**`,
         headers: {
           Accept: 'application/json',
         },

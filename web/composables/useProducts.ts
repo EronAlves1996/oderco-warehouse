@@ -39,21 +39,21 @@ const handleError = (error: any) => {
   });
 };
 
-export const useProducts = (page: Ref<number>, search: Ref<string>) =>
-  useFetch('/api/products', {
+export const useProducts = (page: Ref<number>, search: Ref<string>) => {
+  const result = useFetch('/api/products', {
     query: {
       page,
       s: search,
     },
     watch: [page, search],
     transform: (t) => paginatedProductSchema.parse(t),
-    onResponseError: ({ response }) => {
-      if (response?._data) {
-        const { _data } = response;
-        handleError(_data);
-      }
-    },
   });
+
+  if (result.error) {
+    handleError(result.error.value?.data);
+  }
+  return result;
+};
 
 export const useProduct = async (id: string) => {
   const {

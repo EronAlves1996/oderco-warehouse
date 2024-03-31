@@ -38,9 +38,18 @@ services:
     image: nginx:alpine
     container_name: nginx-server
     ports:
-      - 80:80
+      - 8000:80
     volumes:
       - ./nginx-server/conf.d:/etc/nginx/conf.d
     depends_on:
       - server
-
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile 
+    depends_on:
+      - nginx-server
+    environment:
+      NUXT_SERVER_URL: http://nginx-server:8000
+    ports:
+      - 3000:3000
