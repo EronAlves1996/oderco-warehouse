@@ -1,6 +1,9 @@
 FROM php:8.2-fpm-alpine as base
 
-# CONFIGURE FIRST BUILD STAGE
+# INSTALL MYSQL EXTENSION
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
+# CONFIGURE BUILD STAGE
 FROM base as build
 
 # COMPOSER
@@ -11,9 +14,6 @@ RUN apk update
 
 # GIT
 RUN apk add git
-
-# INSTALL MYSQL EXTENSION
-RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # INSTALL ZIP EXTENSION
 RUN apk add \
@@ -65,8 +65,9 @@ RUN php artisan migrate:refresh
 RUN php artisan test
 
 # AFTER RUNNING TESTS AND INSTALLING DEPS, WE GONNA MOUNT THE APP FOR PROD
-FROM build as prod
-
+FROM base as prod
+WORKDIR /var/www
+COPY --from=build /var/www /var/www
 RUN addgroup -g 1000 -S www && \
     adduser -u 1000 -S www -G www
 USER www

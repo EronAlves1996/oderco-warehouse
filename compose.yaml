@@ -9,10 +9,18 @@ services:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 1s
+      retries: 10
   server:
-    build: ./server
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: oderco-warehouse-server
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - 9000:9000 
     environment:
@@ -26,3 +34,13 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: root
       FILESYSTEM_DISK: public
+  nginx-server:
+    image: nginx:alpine
+    container_name: nginx-server
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx-server/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - server
+
