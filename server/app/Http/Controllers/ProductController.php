@@ -85,7 +85,7 @@ class ProductController extends Controller
 
         return response(null, 201, [
             "location" =>
-                $request->getRequestUri() . $createdProduct->public_id,
+                $request->getRequestUri() . "/" . $createdProduct->public_id,
         ]);
     }
 
