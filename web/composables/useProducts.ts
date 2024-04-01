@@ -49,7 +49,7 @@ export const useProducts = (page: Ref<number>, search: Ref<string>) => {
     transform: (t) => paginatedProductSchema.parse(t),
   });
 
-  if (result.error) {
+  if (result.error.value?.data) {
     handleError(result.error.value?.data);
   }
   return result;
