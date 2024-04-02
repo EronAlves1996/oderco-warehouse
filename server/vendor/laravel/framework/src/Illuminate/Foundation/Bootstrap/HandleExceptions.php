@@ -2,6 +2,8 @@
 
 namespace Illuminate\Foundation\Bootstrap;
 
+use ErrorException;
+use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Log\LogManager;
@@ -9,8 +11,6 @@ use Illuminate\Support\Env;
 use Monolog\Handler\NullHandler;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\ErrorHandler\Error\FatalError;
-use ErrorException;
-use Exception;
 use Throwable;
 
 class HandleExceptions
@@ -49,7 +49,7 @@ class HandleExceptions
 
         register_shutdown_function($this->forwardsTo('handleShutdown'));
 
-        if (!$app->environment('testing')) {
+        if (! $app->environment('testing')) {
             ini_set('display_errors', 'Off');
         }
     }
@@ -67,8 +67,6 @@ class HandleExceptions
      */
     public function handleError($level, $message, $file = '', $line = 0)
     {
-        var_dump($level);
-        var_dump($message);
         if ($this->isDeprecation($level)) {
             $this->handleDeprecationError($message, $file, $line, $level);
         } elseif (error_reporting() & $level) {
@@ -106,7 +104,8 @@ class HandleExceptions
                 $log->warning((string) new ErrorException($message, 0, $level, $file, $line));
             } else {
                 $log->warning(sprintf('%s in %s on line %s',
-                    $message, $file, $line));
+                    $message, $file, $line
+                ));
             }
         });
     }
@@ -118,9 +117,9 @@ class HandleExceptions
      */
     protected function shouldIgnoreDeprecationErrors()
     {
-        return !class_exists(LogManager::class) ||
-            !static::$app->hasBeenBootstrapped() ||
-            (static::$app->runningUnitTests() && !Env::get('LOG_DEPRECATIONS_WHILE_TESTING'));
+        return ! class_exists(LogManager::class)
+            || ! static::$app->hasBeenBootstrapped()
+            || (static::$app->runningUnitTests() && ! Env::get('LOG_DEPRECATIONS_WHILE_TESTING'));
     }
 
     /**
@@ -228,7 +227,7 @@ class HandleExceptions
     {
         self::$reservedMemory = null;
 
-        if (!is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
+        if (! is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
             $this->handleException($this->fatalErrorFromPhpError($error, 0));
         }
     }
@@ -252,7 +251,7 @@ class HandleExceptions
      */
     protected function forwardsTo($method)
     {
-        return fn(...$arguments) => static::$app
+        return fn (...$arguments) => static::$app
             ? $this->{$method}(...$arguments)
             : false;
     }
