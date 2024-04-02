@@ -2,8 +2,8 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ErrorDetails
 {
@@ -27,7 +27,7 @@ class ErrorDetails
         $this->type = $request->getBaseUrl() . "/problems/" . $type;
     }
 
-    public function emit(): JsonResponse
+    public function emit(): Response
     {
         return response()->json($this, $this->status, [
             "Content-Type" => "application/problem+json",

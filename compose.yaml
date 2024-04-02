@@ -13,7 +13,7 @@ services:
       - 3306:3306
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 1s
+      timeout: 30s
       retries: 10
   server:
     build: 
@@ -38,6 +38,7 @@ services:
     volumes:
       - server-static:/var/www/public
       - storage:/var/www/storage/app/public
+      - ./server/php/local.ini:/usr/local/etc/php/conf.d/local.ini
   nginx-server:
     image: nginx:alpine
     container_name: nginx-server
@@ -47,8 +48,6 @@ services:
       - storage:/var/www/storage/app/public
     depends_on:
       - server
-    ports:
-      - 8000:80
   web:
     build:
       context: ./web

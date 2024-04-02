@@ -16,7 +16,7 @@ const nonNegative = withMessage('Campo não pode ser negativo!', minValue(0));
 const imageValidator = (f: File) =>
   f === null ||
   f === undefined ||
-  ['jpg', 'png'].some((format) => f.type.endsWith(format));
+  ['jpg', 'png', 'jpeg'].some((format) => f.type.endsWith(format));
 
 export const getValidationRules = () => ({
   name: {
