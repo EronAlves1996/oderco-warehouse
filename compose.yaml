@@ -4,7 +4,7 @@ services:
     image: mysql:latest
     command: --init-file /data/application/init.sql
     volumes:
-      - ./init.sql:/data/application/init.sql
+      - ./db/init.sql:/data/application/init.sql
     environment:
       MYSQL_ROOT_PASSWORD: root
 # Recomendável abrir a porta, pois os testes dependem que o banco de dados
