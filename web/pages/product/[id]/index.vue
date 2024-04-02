@@ -1,6 +1,10 @@
 <script setup lang="ts">
   import { Mask } from 'maska';
 
+  useHead({
+    title: 'Oderço - Detalhes do Produto',
+  });
+
   const {
     params: { id },
   } = useRoute();
