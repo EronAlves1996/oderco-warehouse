@@ -83,9 +83,13 @@ class ProductController extends Controller
             }
         );
 
+        $reqUri = $request->getRequestUri();
+
         return response(null, 201, [
             "location" =>
-                $request->getRequestUri() . "/" . $createdProduct->public_id,
+                str_ends_with($reqUri, '/') ?
+                    $reqUri . $createdProduct->public_id :
+                    $reqUri . "/" . $createdProduct->public_id,
         ]);
     }
 
